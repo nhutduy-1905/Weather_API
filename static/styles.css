@@ -1,36 +1,38 @@
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #f4f4f4;
-}
-
-h1 {
-  color: #333;
+  text-align: center; /* Căn giữa nội dung */
 }
 
 .container {
-  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Để nội dung nằm giữa màn hình */
 }
 
-input {
+.history {
+  width: 50%; /* Định nghĩa độ rộng phù hợp */
+  margin: 20px auto; /* Căn giữa theo chiều ngang */
   padding: 10px;
-  width: 200px;
-  margin-right: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  text-align: center; /* Căn giữa nội dung lịch sử */
 }
 
-button {
-  padding: 10px;
-  background-color: #28a745;
-  color: white;
-  border: none;
+.history ul {
+  list-style: none;
+  padding: 0;
+}
+
+.history ul li {
+  padding: 5px;
   cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s;
 }
 
-button:hover {
-  background-color: #218838;
-}
-
-#weather-result {
-  margin-top: 20px;
-  font-size: 20px;
+.history ul li:hover {
+  color: #0056b3;
+  text-decoration: underline;
 }
