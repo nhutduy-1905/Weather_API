@@ -7,5 +7,3 @@
   from = "/*"
   to = "/.netlify/functions/app"
   status = 200
-[build]
-  environment = { PYTHON_VERSION = "3.9" }
