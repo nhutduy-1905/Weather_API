@@ -81,21 +81,46 @@ function getCurrentLocation() {
     });
   }
 }
-
-// Lưu lịch sử tìm kiếm vào giao diện
+// 🔹 Lưu lịch sử vào localStorage
 function addToHistory(city) {
-  const historyList = document.getElementById("historyList");
-  const listItem = document.createElement("li");
-  listItem.textContent = city;
-  listItem.onclick = () => getWeather(city);
-  historyList.appendChild(listItem);
+  let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+  if (!history.includes(city)) {
+    history.push(city);
+    localStorage.setItem("searchHistory", JSON.stringify(history));
+  }
+
+  loadHistory();
 }
 
+// // Lưu lịch sử tìm kiếm vào giao diện
+// function loadToHistory(city) {
+//   const historyList = document.getElementById("historyList");
+//   const listItem = document.createElement("li");
+//   listItem.textContent = city;
+//   listItem.onclick = () => getWeather(city);
+//   historyList.appendChild(listItem);
+// }
+
 // Load lịch sử khi mở trang
+// function loadHistory() {
+//   fetch("/")
+//     .then((response) => response.text())
+//     .then(() => {
+//       console.log("Lịch sử tải thành công!");
+//     });
+
+// 🔹 Hiển thị lịch sử khi mở trang
 function loadHistory() {
-  fetch("/")
-    .then((response) => response.text())
-    .then(() => {
-      console.log("Lịch sử tải thành công!");
-    });
+  const historyList = document.getElementById("historyList");
+  historyList.innerHTML = ""; // Xóa danh sách cũ để tránh trùng lặp
+
+  let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+  history.forEach(city => {
+    const listItem = document.createElement("li");
+    listItem.textContent = city;
+    listItem.onclick = () => getWeather(city);
+    historyList.appendChild(listItem);
+  });
 }
