@@ -27,7 +27,6 @@ def weather():
             "description": data["weather"][0]["description"].capitalize(),
             "icon": f"http://openweathermap.org/img/wn/{data['weather'][0]['icon']}@2x.png"
         }
-
         # Lưu vào lịch sử tìm kiếm
         history = session.get("history", [])
         if weather_data["city"] not in history:

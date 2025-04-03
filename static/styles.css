@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center; /* Căn giữa nội dung */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1)), url('cold.png') no-repeat center/cover;
 }
 
 .container {
