@@ -1,10 +1,10 @@
 [build]
-  command = "pip install -r requirements.txt"
-  functions = "netlify/functions"
-  publish = "templates"
-  publish = "static"
+command = "pip install -r requirements.txt && python build.py"
+functions = "netlify/functions"
+publish = "templates"
 
 [[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/app"
-  status = 200
+from = "/*"
+to = "/.netlify/functions/app"
+status = 200
+
