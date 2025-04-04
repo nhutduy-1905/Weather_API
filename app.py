@@ -1,22 +1,13 @@
 
 from flask import Flask, render_template, request, jsonify, session
-import os
 import requests
-from dotenv import load_dotenv
 
 # Tải biến môi trường từ file .env
 
 app = Flask(__name__)
+API_KEY= "ce75a21f9c503e5d4617a91f93fea050"
 app.secret_key = "supersecretkey"  # Khóa bí mật để lưu session
 # API_KEY = "ce75a21f9c503e5d4617a91f93fea050" 
-API_KEY = os.getenv('OPENWEATHER_API_KEY')
-if not API_KEY:
-    print("Không tìm thấy OPENWEATHER_API_KEY trong tệp .env.")
-    print("Đang thử lấy từ biến môi trường hệ thống...")
-    API_KEY = os.environ.get('OPENWEATHER_API_KEY', None)
-    if not API_KEY:
-        print("OPENWEATHER_API_KEY không được thiết lập. Chương trình sẽ thoát.")
-        exit(1)
 @app.route('/')
 def index():
     history = session.get("history", [])  # Lấy lịch sử tìm kiếm từ session
@@ -51,3 +42,38 @@ def weather():
         return jsonify({"error": "Không tìm thấy thành phố!"})
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
