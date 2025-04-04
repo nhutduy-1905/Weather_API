@@ -8,12 +8,12 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Khóa bí mật để lưu session
-# API_KEY = "ce75a21f9c503e5d4617a91f93fea050" 
+#  API_KEY = "ce75a21f9c503e5d4617a91f93fea050" 
+# Lấy API key từ biến môi trường
 API_KEY = os.getenv('OPENWEATHER_API_KEY')
 if not API_KEY:
-    print("Không tìm thấy OPENWEATHER_API_KEY trong tệp .env.")
-    print("Đang thử lấy từ biến môi trường hệ thống...")
-    API_KEY = os.environ.get('OPENWEATHER_API_KEY', None)
+    print("OPENWEATHER_API_KEY không được thiết lập. Chương trình sẽ thoát.")
+    exit(1)
     if not API_KEY:
         print("OPENWEATHER_API_KEY không được thiết lập. Chương trình sẽ thoát.")
         exit(1)
