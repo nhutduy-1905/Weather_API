@@ -1,39 +1,133 @@
+html,
 body {
-  font-family: Arial, sans-serif;
-  text-align: center; /* Căn giữa nội dung */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1)), url('cold.png') no-repeat center/cover;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-.container {
+/* Dùng Flexbox để căn giữa trên toàn trang */
+body {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Để nội dung nằm giữa màn hình */
+  /* Căn giữa ngang */
+  align-items: center;
+  /* Căn giữa dọc */
+  min-height: 100vh;
+  /* Độ cao tối thiểu là full màn hình */
+
+  font-family: Arial, sans-serif;
+  background: url("/static/cold.png") no-repeat center center fixed;
+  background-size: cover;
 }
 
-.history {
-  width: 50%; /* Định nghĩa độ rộng phù hợp */
-  margin: 20px auto; /* Căn giữa theo chiều ngang */
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  text-align: center; /* Căn giữa nội dung lịch sử */
+/* Lớp container bao bọc nội dung */
+.container {
+  max-width: 500px;
+  width: 90%;
+  /* Giúp responsive */
+  padding: 20px;
+  border-radius: 12px;
+
+  background: rgba(0, 0, 0, 0.5);
+  /* Nền mờ giúp nổi chữ */
+  text-align: center;
+  /* Căn giữa chữ */
+  color: #fff;
+  /* Chữ trắng */
 }
 
-.history ul {
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+ul#historyList {
   list-style: none;
   padding: 0;
+  max-height: 100px;
+  /* Giảm chiều cao để danh sách gọn hơn (khoảng 3-4 mục) */
+  overflow-y: auto;
+  /* Thêm thanh cuộn dọc */
+  border-radius: 4px;
+  /* Bo góc nhẹ cho danh sách */
 }
 
-.history ul li {
+/* Tùy chỉnh thanh cuộn */
+ul#historyList::-webkit-scrollbar {
+  width: 6px;
+  /* Độ mỏng của thanh cuộn */
+}
+
+ul#historyList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  /* Màu nền của thanh cuộn */
+  border-radius: 4px;
+}
+
+ul#historyList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  /* Màu của thanh cuộn */
+  border-radius: 4px;
+}
+
+ul#historyList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+  /* Màu khi hover */
+}
+
+ul#historyList li {
   padding: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 3px 0;
   cursor: pointer;
-  color: #007bff;
-  transition: color 0.3s;
+  border-radius: 4px;
+  color: white;
 }
 
-.history ul li:hover {
-  color: #0056b3;
-  text-decoration: underline;
+ul#historyList li:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Các ô input và nút bấm */
+input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  margin: 12px 0;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Khu vực hiển thị lỗi */
+.error {
+  color: #ff4d4d;
+  margin: 10px 0;
+}
+
+/* Khu vực hiển thị thời tiết */
+.weather-box {
+  margin-top: 20px;
+}
+
+/* Ảnh mô tả thời tiết */
+#weatherIcon {
+  max-width: 100px;
+  margin: 10px auto;
+  display: block;
 }

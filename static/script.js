@@ -1,22 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
-  document
-    .getElementById("cityInput")
-    .addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        getWeather();
-      }
-    });
+  const cityInput = document.getElementById("cityInput");
+  const errorEl = document.getElementById("error");
 
-  // Tải lại lịch sử tìm kiếm
+  if (!cityInput || !errorEl) {
+    console.error("Không tìm thấy phần tử DOM cần thiết.");
+    return;
+  }
+
+  cityInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      getWeather();
+    }
+  });
+
   loadHistory();
-
-  // Tự động lấy vị trí hiện tại
-  getCurrentLocation();
 });
 
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, (match) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[match]);
+}
+
 function getWeather(cityName = null) {
-  const city = cityName || document.getElementById("cityInput").value.trim();
+  const cityInput = document.getElementById("cityInput");
   const errorEl = document.getElementById("error");
+  const weatherBox = document.getElementById("weatherBox");
+  const city = cityName || cityInput.value.trim();
 
   if (!city) {
     errorEl.textContent = "Vui lòng nhập tên thành phố!";
@@ -25,84 +39,137 @@ function getWeather(cityName = null) {
   }
 
   errorEl.style.display = "none";
+  cityInput.disabled = true;
 
-  fetch(`/weather?city=${city}`)
+  // Thêm trạng thái tải
+  const loadingEl = document.createElement("div");
+  loadingEl.textContent = "Đang tải...";
+  loadingEl.id = "loading";
+  weatherBox.appendChild(loadingEl);
+
+  fetch(`/weather?city=${encodeURIComponent(city)}`)
     .then((response) => response.json())
     .then((data) => {
+      cityInput.disabled = false;
+      loadingEl.remove();
+
       if (data.error) {
         errorEl.textContent = data.error;
         errorEl.style.display = "block";
         return;
       }
 
-      document.getElementById("cityName").textContent = `🌆 ${data.city}`;
-      document.getElementById(
-        "temperature"
-      ).textContent = `🌡️ Nhiệt độ: ${data.temperature}°C`;
-      document.getElementById(
-        "feels_like"
-      ).textContent = `🌡️ Cảm giác như: ${data.feels_like}°C`;
-      document.getElementById(
-        "humidity"
-      ).textContent = `💧 Độ ẩm: ${data.humidity}%`;
-      document.getElementById(
-        "pressure"
-      ).textContent = `🔽 Áp suất: ${data.pressure} hPa`;
-      document.getElementById(
-        "wind_speed"
-      ).textContent = `🌬️ Gió: ${data.wind_speed} m/s`;
-      document.getElementById(
-        "description"
-      ).textContent = `📌 ${data.description}`;
+      // Cập nhật thông tin thời tiết
+      document.getElementById("cityName").textContent = `🌆 ${escapeHTML(data.city)}`;
+      document.getElementById("temperature").textContent = `🌡️ Nhiệt độ: ${data.temperature}°C`;
+      document.getElementById("feels_like").textContent = `🌡️ Cảm giác như: ${data.feels_like}°C`;
+      document.getElementById("humidity").textContent = `💧 Độ ẩm: ${data.humidity}%`;
+      document.getElementById("pressure").textContent = `🔽 Áp suất: ${data.pressure} hPa`;
+      document.getElementById("wind_speed").textContent = `🌬️ Gió: ${data.wind_speed} m/s`;
+      document.getElementById("description").textContent = `📌 ${escapeHTML(data.description)}`;
 
       const weatherIcon = document.getElementById("weatherIcon");
+      weatherIcon.src = data.icon || "default-icon.png";
+      weatherIcon.style.display = data.icon ? "block" : "none";
 
       addToHistory(data.city);
     })
     .catch((error) => {
-      errorEl.textContent = "Lỗi khi lấy dữ liệu!";
+      cityInput.disabled = false;
+      loadingEl.remove();
+      errorEl.textContent = error.message.includes("Failed to fetch")
+        ? "Lỗi kết nối mạng. Vui lòng kiểm tra internet."
+        : "Đã xảy ra lỗi khi lấy dữ liệu thời tiết.";
       errorEl.style.display = "block";
+      console.error("Fetch error:", error);
     });
 }
 
-// Lấy vị trí hiện tại của người dùng
 function getCurrentLocation() {
+  const errorEl = document.getElementById("error");
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=ce75a21f9c503e5d4617a91f93fea050&units=metric&lang=vi`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          getWeather(data.name);
-        });
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        fetchWeatherByCoords(lat, lon);
+      },
+      (error) => {
+        errorEl.textContent = "Không thể lấy vị trí hiện tại.";
+        errorEl.style.display = "block";
+      }
+    );
+  } else {
+    errorEl.textContent = "Trình duyệt không hỗ trợ định vị.";
+    errorEl.style.display = "block";
   }
 }
-// 🔹 Lưu lịch sử vào localStorage
+
+function fetchWeatherByCoords(lat, lon) {
+  const errorEl = document.getElementById("error");
+  const weatherBox = document.getElementById("weatherBox");
+
+  const loadingEl = document.createElement("div");
+  loadingEl.textContent = "Đang tải...";
+  loadingEl.id = "loading";
+  weatherBox.appendChild(loadingEl);
+
+  fetch(`/weather?lat=${lat}&lon=${lon}`)
+    .then((response) => response.json())
+    .then((data) => {
+      loadingEl.remove();
+      if (data.error) {
+        errorEl.textContent = data.error;
+        errorEl.style.display = "block";
+        return;
+      }
+
+      document.getElementById("cityName").textContent = `🌆 ${escapeHTML(data.city)}`;
+      document.getElementById("temperature").textContent = `🌡️ Nhiệt độ: ${data.temperature}°C`;
+      document.getElementById("feels_like").textContent = `🌡️ Cảm giác như: ${data.feels_like}°C`;
+      document.getElementById("humidity").textContent = `💧 Độ ẩm: ${data.humidity}%`;
+      document.getElementById("pressure").textContent = `🔽 Áp suất: ${data.pressure} hPa`;
+      document.getElementById("wind_speed").textContent = `🌬️ Gió: ${data.wind_speed} m/s`;
+      document.getElementById("description").textContent = `📌 ${escapeHTML(data.description)}`;
+
+      const weatherIcon = document.getElementById("weatherIcon");
+      weatherIcon.src = data.icon || "default-icon.png";
+      weatherIcon.style.display = data.icon ? "block" : "none";
+
+      addToHistory(data.city);
+    })
+    .catch((error) => {
+      loadingEl.remove();
+      errorEl.textContent = "Đã xảy ra lỗi khi lấy dữ liệu thời tiết.";
+      errorEl.style.display = "block";
+      console.error("Fetch error:", error);
+    });
+}
+
 function addToHistory(city) {
   let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+  const normalizedCity = city.toLowerCase();
 
-  if (!history.includes(city)) {
-    history.push(city);
+  if (!history.some((item) => item.toLowerCase() === normalizedCity)) {
+    history.unshift(city);
+    history = history.slice(0, 5);
     localStorage.setItem("searchHistory", JSON.stringify(history));
   }
 
   loadHistory();
 }
-// 🔹 Hiển thị lịch sử khi mở trang
+
 function loadHistory() {
   const historyList = document.getElementById("historyList");
-  historyList.innerHTML = ""; // Xóa danh sách cũ để tránh trùng lặp
-
   let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
 
-  history.forEach(city => {
-    const listItem = document.createElement("li");
-    listItem.textContent = city;
-    listItem.onclick = () => getWeather(city);
-    historyList.appendChild(listItem);
-  });
+  if (historyList.children.length !== history.length) {
+    historyList.innerHTML = "";
+    history.forEach((city) => {
+      const listItem = document.createElement("li");
+      listItem.innerText = city;
+      listItem.onclick = () => getWeather(city);
+      historyList.appendChild(listItem);
+    });
+  }
 }

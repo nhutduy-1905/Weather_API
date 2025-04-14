@@ -1,62 +1,44 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ứng Dụng Thời Tiết</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Ứng Dụng Thời Tiết 🌍</h1>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dự báo thời tiết</title>
+  
+  <!-- Kết nối với file CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<style>
+  body {
+    background: url("{{ url_for('static', filename='cold.png') }}") no-repeat center center fixed;
+    background-size: cover;
+  }
+</style>
+<body>
+  <div class="container">
+    <h1>🌤️ Dự báo thời tiết</h1>
+    <input type="text" id="cityInput" placeholder="Nhập tên thành phố..." />
+    <button onclick="getWeather()">Xem thời tiết</button>
+    <button onclick="getCurrentLocation()">📍 Theo dõi vị trí hiện tại</button>
+    
+    <div id="error" class="error"></div>
 
-      <div class="input-container">
-        <input type="text" id="cityInput" placeholder="Nhập tên thành phố" />
-        <button onclick="getWeather()">🔍</button>
-      </div>
+    <div id="weatherBox" class="weather-box">
+      <h2 id="cityName"></h2>
+      <img id="weatherIcon" style="display:none;" />
+      <p id="temperature"></p>
+      <p id="feels_like"></p>
+      <p id="humidity"></p>
+      <p id="pressure"></p>
+      <p id="wind_speed"></p>
+      <p id="description"></p>
+    </div>
 
-      <div id="weatherResult">
-        <h2 id="cityName"></h2>
-        <p id="temperature"></p>
-        <p id="feels_like"></p>
-        <p id="humidity"></p>
-        <p id="pressure"></p>
-        <p id="wind_speed"></p>
-        <p id="description"></p>
-        <img id="weatherIcon" src="" alt="" style="display: none" />
-        <p id="error" style="color: red"></p>
-      </div>
-      <div class="history">
-        <button id="toggleHistory">Hiển thị lịch sử</button>
-        <div id="historyContainer">
-          <h3>Lịch sử tìm kiếm</h3>
-          <ul id="historyList"></ul>
-        </div>
-      </div>
-      
-      <style>
-        #historyContainer {
-          display: none; /* Ẩn lịch sử khi tải trang */
-          background: #f8f8f8;
-          padding: 10px;
-          border-radius: 5px;
-          width: 300px;
-          text-align: center;
-          margin-top: 10px;
-        }
-      </style>     
-      <script>
-        document.getElementById("toggleHistory").addEventListener("click", function () {
-          let historyContainer = document.getElementById("historyContainer");
-          if (historyContainer.style.display === "none") {
-            historyContainer.style.display = "block"; // Hiện ra
-            this.textContent = "Ẩn lịch sử";
-          } else {
-            historyContainer.style.display = "none"; // Ẩn đi
-            this.textContent = "Hiển thị lịch sử";
-          }
-        });
-      </script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+    <h3>Lịch sử tìm kiếm</h3>
+    <ul id="historyList"></ul>
+  </div>
+
+  <!-- Kết nối JavaScript -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
 </html>
