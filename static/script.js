@@ -147,13 +147,13 @@ function fetchWeatherByCoords(lat, lon) {
 }
 
 function addToHistory(city) {
-  let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+  let history = JSON.parse(sessionStorage.getItem("searchHistory")) || [];
   const normalizedCity = city.toLowerCase();
 
   if (!history.some((item) => item.toLowerCase() === normalizedCity)) {
     history.unshift(city);
     history = history.slice(0, 5);
-    localStorage.setItem("searchHistory", JSON.stringify(history));
+    sessionStorage.setItem("searchHistory", JSON.stringify(history));
   }
 
   loadHistory();
@@ -161,7 +161,7 @@ function addToHistory(city) {
 
 function loadHistory() {
   const historyList = document.getElementById("historyList");
-  let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+  let history = JSON.parse(sessionStorage.getItem("searchHistory")) || [];
 
   if (historyList.children.length !== history.length) {
     historyList.innerHTML = "";
@@ -173,3 +173,5 @@ function loadHistory() {
     });
   }
 }
+
+// session 

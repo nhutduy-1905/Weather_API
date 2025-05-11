@@ -65,3 +65,6 @@ def weather():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+#  API_KEY = "ce75a21f9c503e5d4617a91f93fea050" 
+# Lấy API key từ biến môi trường
